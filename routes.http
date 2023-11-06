@@ -3,7 +3,8 @@ POST http://localhost:3333/user/signup
 content-type: application/json
 
 {
-  "email": "email@email.com",
+  "name": "John",
+  "email": "email1@email.com",
   "password": "123456"
 }
 
@@ -14,9 +15,16 @@ POST http://localhost:3333/user/signin
 content-type: application/json
 
 {
-  "email": "email@email.com",
+  "email": "email1@email.com",
   "password": "123456"
 }
+
+###
+
+# @name user/me
+GET http://localhost:3333/user/me
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MjcwN2E2Mi04OGY0LTRiYzQtOTMzNS0yZmZiYzczZjRkNmQiLCJpYXQiOjE2OTkyODk5MjgsImV4cCI6MTY5OTI5MDA0OH0.T17p8FS0VdbngDSsuFfthHH1VWM1PlsWJqHnEv0wsI0
 
 ###
 
