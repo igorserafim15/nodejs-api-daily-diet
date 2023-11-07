@@ -4,8 +4,10 @@ import { meals } from './meals'
 import { checkJwt } from '../middlewares/check-jwt'
 
 export async function metricsRouter(app: FastifyInstance) {
-  app.get('/count', { onRequest: [checkJwt] }, (_, res) => {
-    const count = meals.length
+  app.get('/count', { onRequest: [checkJwt] }, (req, res) => {
+    const userId = req.user.sub
+
+    const count = meals.filter((item) => item.userId === userId).length
 
     return res.status(200).send({ count })
   })
@@ -17,15 +19,20 @@ export async function metricsRouter(app: FastifyInstance) {
 
     const query = querySchema.parse(req.query)
 
-    const metrics = meals.filter(
-      (metric) => String(metric.isDiet) === query.isDiet,
-    )
+    const userId = req.user.sub
+
+    const metrics = meals.filter((metric) => {
+      return metric.userId === userId && String(metric.isDiet) === query.isDiet
+    })
 
     return res.status(200).send({ metrics })
   })
 
-  app.get('/best-sequence', { onRequest: [checkJwt] }, (_, res) => {
-    const sequenceMeals = meals.map((meal) => meal.isDiet)
+  app.get('/best-sequence', { onRequest: [checkJwt] }, (req, res) => {
+    const userId = req.user.sub
+
+    const mealsFromUser = meals.filter((meal) => meal.userId === userId)
+    const sequenceMeals = mealsFromUser.map((meal) => meal.isDiet)
 
     let currentSequence = 0
     let bestSequence = 0

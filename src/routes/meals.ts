@@ -5,6 +5,7 @@ import { checkJwt } from '../middlewares/check-jwt'
 
 interface Meal {
   id: string
+  userId: string
   name: string
   description: string
   hours: number
@@ -26,6 +27,7 @@ export async function mealsRouter(app: FastifyInstance) {
 
     meals.push({
       id: randomUUID(),
+      userId: req.user.sub,
       name: body.name,
       description: body.description,
       hours: body.hours,
@@ -35,8 +37,12 @@ export async function mealsRouter(app: FastifyInstance) {
     return res.status(201).send()
   })
 
-  app.get('/list', { onRequest: [checkJwt] }, async (_, res) => {
-    return res.status(200).send({ meals })
+  app.get('/list', { onRequest: [checkJwt] }, async (req, res) => {
+    const userId = req.user.sub
+
+    const mealsFromUser = meals.filter((meal) => meal.userId === userId)
+
+    return res.status(200).send({ meals: mealsFromUser })
   })
 
   app.patch('/', async (req, res) => {
@@ -77,15 +83,23 @@ export async function mealsRouter(app: FastifyInstance) {
     return res.status(200).send()
   })
 
-  app.get('/:id', async (req, res) => {
-    const paramsSchema = z.object({
+  app.get(':id', { onRequest: [checkJwt] }, async (req, res) => {
+    const querySchema = z.object({
       id: z.string().uuid(),
     })
 
-    const params = paramsSchema.parse(req.params)
+    const query = querySchema.parse(req.query)
 
-    console.log(params)
+    const userId = req.user.sub
 
-    return res.status(200).send({ meal: {} })
+    const meal = meals.find((item) => {
+      return item.userId === userId && item.id === query.id
+    })
+
+    if (!meal) {
+      return res.status(422).send({ message: 'Meal not found.' })
+    }
+
+    return res.status(200).send({ meal })
   })
 }

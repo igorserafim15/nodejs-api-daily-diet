@@ -8,17 +8,17 @@ import { ZodError } from 'zod'
 
 export const app = fastify()
 
+app.register(authenticateRouter, { prefix: 'user' })
+app.register(mealsRouter, { prefix: 'meals' })
+app.register(metricsRouter, { prefix: 'metrics' })
+
 app.register(cookie)
 
 app.register(fastifyJwt, {
   secret: 'secret54321',
   cookie: { cookieName: 'refreshToken', signed: false },
-  sign: { expiresIn: '2m' },
+  sign: { expiresIn: '1m' },
 })
-
-app.register(authenticateRouter, { prefix: 'user' })
-app.register(mealsRouter, { prefix: 'meals' })
-app.register(metricsRouter, { prefix: 'metrics' })
 
 app.setErrorHandler((error, _, res) => {
   if (error instanceof ZodError) {

@@ -3,6 +3,7 @@ import { FastifyInstance } from 'fastify'
 import { z } from 'zod'
 import { randomUUID } from 'node:crypto'
 import { checkJwt } from '../middlewares/check-jwt'
+import { cookiesOptions } from '../utils'
 
 interface User {
   id: string
@@ -65,16 +66,11 @@ export async function authenticateRouter(app: FastifyInstance) {
 
     const refreshToken = await res.jwtSign(
       {},
-      { sign: { sub: user.id, expiresIn: '5m' } },
+      { sign: { sub: user.id, expiresIn: '2m' } },
     )
 
     return res
-      .setCookie('refreshToken', refreshToken, {
-        path: '/',
-        secure: true,
-        sameSite: true,
-        httpOnly: true,
-      })
+      .setCookie('refreshToken', refreshToken, cookiesOptions)
       .status(200)
       .send({ token })
   })
@@ -89,5 +85,21 @@ export async function authenticateRouter(app: FastifyInstance) {
     }
 
     return res.status(200).send({ user: { ...user, password: undefined } })
+  })
+
+  app.put('/refresh-token', async (req, res) => {
+    await req.jwtVerify({ onlyCookie: true })
+
+    const token = await res.jwtSign({}, { sign: { sub: req.user.sub } })
+
+    const refreshToken = await res.jwtSign(
+      {},
+      { sign: { sub: req.user.sub, expiresIn: '2m' } },
+    )
+
+    return res
+      .setCookie('refreshToken', refreshToken, cookiesOptions)
+      .status(200)
+      .send({ token })
   })
 }
