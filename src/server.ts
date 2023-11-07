@@ -18,7 +18,7 @@ app.register(cookie)
 app.register(fastifyJwt, {
   secret: 'secret54321',
   cookie: { cookieName: 'refreshToken', signed: false },
-  sign: { expiresIn: '1m' },
+  sign: { expiresIn: '20m' },
 })
 
 app.setErrorHandler((error, _, res) => {

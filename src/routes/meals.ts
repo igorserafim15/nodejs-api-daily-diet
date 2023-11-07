@@ -2,17 +2,7 @@ import { randomUUID } from 'node:crypto'
 import { FastifyInstance } from 'fastify'
 import { z } from 'zod'
 import { checkJwt } from '../middlewares/check-jwt'
-
-interface Meal {
-  id: string
-  userId: string
-  name: string
-  description: string
-  hours: number
-  isDiet: boolean
-}
-
-export let meals: Meal[] = []
+import { knex } from '../database'
 
 export async function mealsRouter(app: FastifyInstance) {
   app.post('/', { onRequest: [checkJwt] }, async (req, res) => {
@@ -25,7 +15,7 @@ export async function mealsRouter(app: FastifyInstance) {
 
     const body = bodySchema.parse(req.body)
 
-    meals.push({
+    await knex('meals').insert({
       id: randomUUID(),
       userId: req.user.sub,
       name: body.name,
@@ -40,61 +30,69 @@ export async function mealsRouter(app: FastifyInstance) {
   app.get('/list', { onRequest: [checkJwt] }, async (req, res) => {
     const userId = req.user.sub
 
-    const mealsFromUser = meals.filter((meal) => meal.userId === userId)
+    const mealsFromUser = await knex('meals')
+      .select('*')
+      .where('userId', userId)
 
     return res.status(200).send({ meals: mealsFromUser })
   })
 
-  app.patch('/', async (req, res) => {
+  app.patch('/:id', { onRequest: [checkJwt] }, async (req, res) => {
     const bodySchema = z.object({
-      id: z.string().uuid(),
       name: z.string().optional(),
       description: z.string().optional(),
       hours: z.number().optional(),
       isDiet: z.boolean().optional(),
     })
 
-    const body = bodySchema.parse(req.body)
+    const paramsSchema = z.object({
+      id: z.string().uuid(),
+    })
 
-    const meal = meals.find((meal) => meal.id === body.id)
+    const params = paramsSchema.parse(req.params)
+    const userId = req.user.sub
+
+    const meal = await knex('meals')
+      .where('id', params.id)
+      .andWhere('userId', userId)
+      .first()
 
     if (!meal) {
-      return res.status(409).send({ message: 'Meal not found' })
+      return res.status(422).send({ message: 'Meal not found' })
     }
-
-    const mealUpdated = { ...meal, ...body }
-
-    const updatedListMeals = meals.filter((meal) => meal.id !== body.id)
-    meals = [...updatedListMeals, mealUpdated]
-
-    return res.status(200).send()
-  })
-
-  app.delete('/', async (req, res) => {
-    const bodySchema = z.object({
-      id: z.string().uuid(),
-    })
 
     const body = bodySchema.parse(req.body)
 
-    const listUpdated = meals.filter((item) => item.id !== body.id)
-    meals = listUpdated
+    await knex('meals').update({ ...body })
 
     return res.status(200).send()
   })
 
-  app.get(':id', { onRequest: [checkJwt] }, async (req, res) => {
-    const querySchema = z.object({
+  app.delete('/:id', async (req, res) => {
+    const paramsSchema = z.object({
       id: z.string().uuid(),
     })
 
-    const query = querySchema.parse(req.query)
+    const params = paramsSchema.parse(req.params)
+
+    await knex('meals').del().where('id', params.id)
+
+    return res.status(200).send()
+  })
+
+  app.get('/:id', { onRequest: [checkJwt] }, async (req, res) => {
+    const paramsSchema = z.object({
+      id: z.string().uuid(),
+    })
+
+    const params = paramsSchema.parse(req.params)
 
     const userId = req.user.sub
 
-    const meal = meals.find((item) => {
-      return item.userId === userId && item.id === query.id
-    })
+    const meal = await knex('meals')
+      .where('id', params.id)
+      .andWhere('userId', userId)
+      .first()
 
     if (!meal) {
       return res.status(422).send({ message: 'Meal not found.' })

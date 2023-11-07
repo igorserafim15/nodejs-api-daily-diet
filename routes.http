@@ -24,20 +24,20 @@ content-type: application/json
 # @name Me
 GET http://localhost:3333/user/me
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhYjE2MmM4ZS05NmY0LTQ1ZjQtYjc0OC00ZWVlNzg5ZjAxMDciLCJpYXQiOjE2OTkzNjQwNDYsImV4cCI6MTY5OTM2NDEwNn0.UhvWveGQTYV0KUkGv0YrPZuByh_IG04ymTByPSET06I
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhY2M1YzllNC0xYzQwLTQyYzktYmNmMy1kNDJhZWM0MWE1ZjEiLCJpYXQiOjE2OTkzOTg0MjAsImV4cCI6MTY5OTM5OTYyMH0.9531pGKiidAG3-QgkeD6ZX1Jitiuplvj-14EBYTB93c
 
 ###
 
 # @name CreateMeal
 POST http://localhost:3333/meals
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiNzNlZmY3My01MTRjLTRmMzItOGRmOS0zOTFlZDE0NWFiZmQiLCJpYXQiOjE2OTkzNjU0NzgsImV4cCI6MTY5OTM2NTUzOH0.q-OcoL8Ab5Qnuhb6CJuEZL1I6no7rrMlxs63Y3FiX38
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhY2M1YzllNC0xYzQwLTQyYzktYmNmMy1kNDJhZWM0MWE1ZjEiLCJpYXQiOjE2OTkzOTgxMzcsImV4cCI6MTY5OTM5ODE5N30.MwD_O-o46Jp9cDT7jJyuB9hnGPo8kzqPXtcqCPOZ2Zk
 
 {
-  "name": "Pastel",
+  "name": "Alface 3",
   "description": "De feira no domingo",
   "hours": 0,
-  "isDiet": false
+  "isDiet": true
 }
 
 ###
@@ -45,49 +45,49 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiNzNlZmY3M
 # @name GetMealsList
 GET http://localhost:3333/meals/list
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiNzNlZmY3My01MTRjLTRmMzItOGRmOS0zOTFlZDE0NWFiZmQiLCJpYXQiOjE2OTkzNjU0NzgsImV4cCI6MTY5OTM2NTUzOH0.q-OcoL8Ab5Qnuhb6CJuEZL1I6no7rrMlxs63Y3FiX38
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhY2M1YzllNC0xYzQwLTQyYzktYmNmMy1kNDJhZWM0MWE1ZjEiLCJpYXQiOjE2OTkzOTg0MjAsImV4cCI6MTY5OTM5OTYyMH0.9531pGKiidAG3-QgkeD6ZX1Jitiuplvj-14EBYTB93c
 
 ###
 
 # @name UpdateMeal
-PATCH http://localhost:3333/meals
+PATCH http://localhost:3333/meals/6636b7e5-9148-42ab-be91-51b70098b7e2
 content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhY2M1YzllNC0xYzQwLTQyYzktYmNmMy1kNDJhZWM0MWE1ZjEiLCJpYXQiOjE2OTkzOTg0MjAsImV4cCI6MTY5OTM5OTYyMH0.9531pGKiidAG3-QgkeD6ZX1Jitiuplvj-14EBYTB93c
 
 {
-  "id": "0e9a4a99-aaa0-4f4f-b698-55198c6f749a",
   "name": "Pastel 2",
 }
 
 ###
 
 # @name DeleteMeal
-DELETE http://localhost:3333/meals
+DELETE http://localhost:3333/meals/6636b7e5-9148-42ab-be91-51b70098b7e2
 content-type: application/json
-
-{
-  "id": "e2cacadf-8b15-49b2-8dcd-af46e5961a4f",
-}
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhY2M1YzllNC0xYzQwLTQyYzktYmNmMy1kNDJhZWM0MWE1ZjEiLCJpYXQiOjE2OTkzOTg0MjAsImV4cCI6MTY5OTM5OTYyMH0.9531pGKiidAG3-QgkeD6ZX1Jitiuplvj-14EBYTB93c
 
 ###
 
 # @name GetMeal
-GET http://localhost:3333/meals?id=87553770-1521-44bd-a438-5eba25fb115e
+GET http://localhost:3333/meals/ea2dcfd6-34f3-457b-8b07-712474ab4ea2
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiNzNlZmY3My01MTRjLTRmMzItOGRmOS0zOTFlZDE0NWFiZmQiLCJpYXQiOjE2OTkzNjU0NzgsImV4cCI6MTY5OTM2NTUzOH0.q-OcoL8Ab5Qnuhb6CJuEZL1I6no7rrMlxs63Y3FiX38
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhY2M1YzllNC0xYzQwLTQyYzktYmNmMy1kNDJhZWM0MWE1ZjEiLCJpYXQiOjE2OTkzOTg0MjAsImV4cCI6MTY5OTM5OTYyMH0.9531pGKiidAG3-QgkeD6ZX1Jitiuplvj-14EBYTB93c
 
 ###
 
 # @name MetricsCount
 GET http://localhost:3333/metrics/count
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhY2M1YzllNC0xYzQwLTQyYzktYmNmMy1kNDJhZWM0MWE1ZjEiLCJpYXQiOjE2OTkzOTg0MjAsImV4cCI6MTY5OTM5OTYyMH0.9531pGKiidAG3-QgkeD6ZX1Jitiuplvj-14EBYTB93c
 
 ###
 
 # @name MetricsIsDiet
-GET http://localhost:3333/metrics?isDiet=false
+GET http://localhost:3333/metrics?isDiet=true
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhY2M1YzllNC0xYzQwLTQyYzktYmNmMy1kNDJhZWM0MWE1ZjEiLCJpYXQiOjE2OTkzOTg0MjAsImV4cCI6MTY5OTM5OTYyMH0.9531pGKiidAG3-QgkeD6ZX1Jitiuplvj-14EBYTB93c
 
 ###
 
 # @name MetricsBestSequence
 GET http://localhost:3333/metrics/best-sequence
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhY2M1YzllNC0xYzQwLTQyYzktYmNmMy1kNDJhZWM0MWE1ZjEiLCJpYXQiOjE2OTkzOTg0MjAsImV4cCI6MTY5OTM5OTYyMH0.9531pGKiidAG3-QgkeD6ZX1Jitiuplvj-14EBYTB93c
 
 ###

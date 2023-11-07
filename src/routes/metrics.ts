@@ -1,18 +1,18 @@
 import { FastifyInstance } from 'fastify'
 import { z } from 'zod'
-import { meals } from './meals'
 import { checkJwt } from '../middlewares/check-jwt'
+import { knex } from '../database'
 
 export async function metricsRouter(app: FastifyInstance) {
-  app.get('/count', { onRequest: [checkJwt] }, (req, res) => {
+  app.get('/count', { onRequest: [checkJwt] }, async (req, res) => {
     const userId = req.user.sub
 
-    const count = meals.filter((item) => item.userId === userId).length
+    const count = await knex('meals').where('userId', userId).count()
 
     return res.status(200).send({ count })
   })
 
-  app.get(':isDiet', { onRequest: [checkJwt] }, (req, res) => {
+  app.get(':isDiet', { onRequest: [checkJwt] }, async (req, res) => {
     const querySchema = z.object({
       isDiet: z.enum(['true', 'false']),
     })
@@ -21,17 +21,17 @@ export async function metricsRouter(app: FastifyInstance) {
 
     const userId = req.user.sub
 
-    const metrics = meals.filter((metric) => {
-      return metric.userId === userId && String(metric.isDiet) === query.isDiet
-    })
+    const metrics = await knex('meals')
+      .where('userId', userId)
+      .andWhere('isDiet', JSON.parse(query.isDiet))
 
     return res.status(200).send({ metrics })
   })
 
-  app.get('/best-sequence', { onRequest: [checkJwt] }, (req, res) => {
+  app.get('/best-sequence', { onRequest: [checkJwt] }, async (req, res) => {
     const userId = req.user.sub
 
-    const mealsFromUser = meals.filter((meal) => meal.userId === userId)
+    const mealsFromUser = await knex('meals').where('userId', userId)
     const sequenceMeals = mealsFromUser.map((meal) => meal.isDiet)
 
     let currentSequence = 0

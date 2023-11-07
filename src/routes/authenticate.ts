@@ -4,15 +4,7 @@ import { z } from 'zod'
 import { randomUUID } from 'node:crypto'
 import { checkJwt } from '../middlewares/check-jwt'
 import { cookiesOptions } from '../utils'
-
-interface User {
-  id: string
-  name: string
-  email: string
-  password: string
-}
-
-const users: User[] = []
+import { knex } from '../database'
 
 export async function authenticateRouter(app: FastifyInstance) {
   app.post('/signup', async (req, res) => {
@@ -24,7 +16,9 @@ export async function authenticateRouter(app: FastifyInstance) {
 
     const body = bodySchema.parse(req.body)
 
-    const emailAlreadyExists = users.some((user) => user.email === body.email)
+    const emailAlreadyExists = await knex('users')
+      .where('email', body.email)
+      .first()
 
     if (emailAlreadyExists) {
       return res.status(409).send({ message: 'Email already exists' })
@@ -32,7 +26,7 @@ export async function authenticateRouter(app: FastifyInstance) {
 
     const password = await hash(body.password, 6)
 
-    users.push({
+    await knex('users').insert({
       id: randomUUID(),
       email: body.email,
       name: body.name,
@@ -50,7 +44,7 @@ export async function authenticateRouter(app: FastifyInstance) {
 
     const body = bodySchema.parse(req.body)
 
-    const user = users.find((user) => user.email === body.email)
+    const user = await knex('users').where('email', body.email).first()
 
     if (!user) {
       return res.status(401).send({ message: 'Invalid credentials' })
@@ -66,7 +60,7 @@ export async function authenticateRouter(app: FastifyInstance) {
 
     const refreshToken = await res.jwtSign(
       {},
-      { sign: { sub: user.id, expiresIn: '2m' } },
+      { sign: { sub: user.id, expiresIn: '1h' } },
     )
 
     return res
@@ -75,10 +69,10 @@ export async function authenticateRouter(app: FastifyInstance) {
       .send({ token })
   })
 
-  app.get('/me', { onRequest: [checkJwt] }, (req, res) => {
+  app.get('/me', { onRequest: [checkJwt] }, async (req, res) => {
     const userId = req.user.sub
 
-    const user = users.find((user) => user.id === userId)
+    const user = await knex('users').where('id', userId).first()
 
     if (!user) {
       return res.status(400).send({ message: 'User not found.' })
