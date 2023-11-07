@@ -1,4 +1,4 @@
-# @name user/signup
+# @name Signup
 POST http://localhost:3333/user/signup
 content-type: application/json
 
@@ -10,7 +10,7 @@ content-type: application/json
 
 ###
 
-# @name user/signin
+# @name Signin
 POST http://localhost:3333/user/signin
 content-type: application/json
 
@@ -21,57 +21,66 @@ content-type: application/json
 
 ###
 
-# @name user/me
+# @name Me
 GET http://localhost:3333/user/me
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MjcwN2E2Mi04OGY0LTRiYzQtOTMzNS0yZmZiYzczZjRkNmQiLCJpYXQiOjE2OTkyODk5MjgsImV4cCI6MTY5OTI5MDA0OH0.T17p8FS0VdbngDSsuFfthHH1VWM1PlsWJqHnEv0wsI0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkODMyNTdkMi1kMmNkLTQwMWYtYmQ0YS02Y2VjZWZkMTQ4OTUiLCJpYXQiOjE2OTkzMTgwNDUsImV4cCI6MTY5OTMxODE2NX0.Jo_QgL7bW35eDQU2842phzx0lFLE_h6LV72uPHxLt4I
 
 ###
 
-# @name meals
+# @name CreateMeal
 POST http://localhost:3333/meals
 content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYWUzNWZhMy02NmQ2LTQ2NWUtOWUzMC01ZmJiZjlkZTdlNTciLCJpYXQiOjE2OTkzMTk1MzQsImV4cCI6MTY5OTMxOTY1NH0.26kzNrJBmTBXma1hZZgQwnsWf1qDkXvvGNONOT6k4K4
 
 {
-  "name": "Pastel",
+  "name": "Salada",
   "description": "De feira no domingo",
   "hours": 0,
-  "isDiet": false
+  "isDiet": true
 }
 
 ###
 
-# @name meals
+# @name GetMealsList
+GET http://localhost:3333/meals/list
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYWUzNWZhMy02NmQ2LTQ2NWUtOWUzMC01ZmJiZjlkZTdlNTciLCJpYXQiOjE2OTkzMTk1MzQsImV4cCI6MTY5OTMxOTY1NH0.26kzNrJBmTBXma1hZZgQwnsWf1qDkXvvGNONOT6k4K4
+
+###
+
+# @name UpdateMeal
 PATCH http://localhost:3333/meals
 content-type: application/json
 
 {
-  "name": "Pastel",
+  "id": "0e9a4a99-aaa0-4f4f-b698-55198c6f749a",
+  "name": "Pastel 2",
 }
 
 ###
 
-# @name meals
+# @name DeleteMeal
 DELETE http://localhost:3333/meals
 content-type: application/json
 
 {
-  "id": "123",
+  "id": "e2cacadf-8b15-49b2-8dcd-af46e5961a4f",
 }
 
 ###
 
-# @name metrics/count
+# @name MetricsCount
 GET http://localhost:3333/metrics/count
 
 ###
 
-# @name metrics/:isDiet
-GET http://localhost:3333/metrics?isDiet=true
+# @name MetricsIsDiet
+GET http://localhost:3333/metrics?isDiet=false
 
 ###
 
-# @name metrics/best-sequence
+# @name MetricsBestSequence
 GET http://localhost:3333/metrics/best-sequence
 
 ###

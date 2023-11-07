@@ -1,8 +1,20 @@
+import { randomUUID } from 'node:crypto'
 import { FastifyInstance } from 'fastify'
 import { z } from 'zod'
+import { checkJwt } from '../middlewares/check-jwt'
+
+interface Meal {
+  id: string
+  name: string
+  description: string
+  hours: number
+  isDiet: boolean
+}
+
+export let meals: Meal[] = []
 
 export async function mealsRouter(app: FastifyInstance) {
-  app.post('/', async (req, res) => {
+  app.post('/', { onRequest: [checkJwt] }, async (req, res) => {
     const bodySchema = z.object({
       name: z.string(),
       description: z.string(),
@@ -12,9 +24,19 @@ export async function mealsRouter(app: FastifyInstance) {
 
     const body = bodySchema.parse(req.body)
 
-    console.log(body)
+    meals.push({
+      id: randomUUID(),
+      name: body.name,
+      description: body.description,
+      hours: body.hours,
+      isDiet: body.isDiet,
+    })
 
     return res.status(201).send()
+  })
+
+  app.get('/list', { onRequest: [checkJwt] }, async (_, res) => {
+    return res.status(200).send({ meals })
   })
 
   app.patch('/', async (req, res) => {
@@ -28,7 +50,16 @@ export async function mealsRouter(app: FastifyInstance) {
 
     const body = bodySchema.parse(req.body)
 
-    console.log(body)
+    const meal = meals.find((meal) => meal.id === body.id)
+
+    if (!meal) {
+      return res.status(409).send({ message: 'Meal not found' })
+    }
+
+    const mealUpdated = { ...meal, ...body }
+
+    const updatedListMeals = meals.filter((meal) => meal.id !== body.id)
+    meals = [...updatedListMeals, mealUpdated]
 
     return res.status(200).send()
   })
@@ -40,7 +71,8 @@ export async function mealsRouter(app: FastifyInstance) {
 
     const body = bodySchema.parse(req.body)
 
-    console.log(body)
+    const listUpdated = meals.filter((item) => item.id !== body.id)
+    meals = listUpdated
 
     return res.status(200).send()
   })
@@ -55,17 +87,5 @@ export async function mealsRouter(app: FastifyInstance) {
     console.log(params)
 
     return res.status(200).send({ meal: {} })
-  })
-
-  app.get('/list:filter', async (req, res) => {
-    const paramsSchema = z.object({
-      filter: z.string(),
-    })
-
-    const params = paramsSchema.parse(req.params)
-
-    console.log(params)
-
-    return res.status(200).send({ meals: [] })
   })
 }

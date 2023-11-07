@@ -1,50 +1,47 @@
 import { FastifyInstance } from 'fastify'
 import { z } from 'zod'
+import { meals } from './meals'
+import { checkJwt } from '../middlewares/check-jwt'
 
 export async function metricsRouter(app: FastifyInstance) {
-  app.get('/count', (_, res) => {
-    const count = 18
+  app.get('/count', { onRequest: [checkJwt] }, (_, res) => {
+    const count = meals.length
 
     return res.status(200).send({ count })
   })
 
-  app.get(':isDiet', (req, res) => {
-    const paramsSchema = z.object({
+  app.get(':isDiet', { onRequest: [checkJwt] }, (req, res) => {
+    const querySchema = z.object({
       isDiet: z.enum(['true', 'false']),
     })
 
-    const params = paramsSchema.parse(req.params)
+    const query = querySchema.parse(req.query)
 
-    console.log(params)
+    const metrics = meals.filter(
+      (metric) => String(metric.isDiet) === query.isDiet,
+    )
 
-    return res.status(200).send({ metrics: [] })
+    return res.status(200).send({ metrics })
   })
 
-  app.get('/best-sequence', (_, res) => {
-    return res.status(200).send({ bestSequence: 11 })
-  })
-}
+  app.get('/best-sequence', { onRequest: [checkJwt] }, (_, res) => {
+    const sequenceMeals = meals.map((meal) => meal.isDiet)
 
-/**
- * const { eachDayOfInterval, format } = require('date-fns');
+    let currentSequence = 0
+    let bestSequence = 0
 
-// Substitua esta matriz com seus próprios dados (true = leu, false = não leu)
-const leituraDosDias = [true, true, true, true, true, true, true, false, false, true, true, true, true, true, false];
+    for (const isDiet of sequenceMeals) {
+      if (isDiet) {
+        currentSequence++
 
-let comprimentoSequenciaAtual = 0;
-let comprimentoSequenciaMaximo = 0;
-
-for (const leu of leituraDosDias) {
-  if (leu) {
-    comprimentoSequenciaAtual++;
-    if (comprimentoSequenciaAtual > comprimentoSequenciaMaximo) {
-      comprimentoSequenciaMaximo = comprimentoSequenciaAtual;
+        if (currentSequence > bestSequence) {
+          bestSequence = currentSequence
+        }
+      } else {
+        currentSequence = 0
+      }
     }
-  } else {
-    comprimentoSequenciaAtual = 0;
-  }
+
+    return res.status(200).send({ bestSequence })
+  })
 }
-
-console.log('A melhor sequência de dias registrados é:', comprimentoSequenciaMaximo);
-
- */
