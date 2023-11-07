@@ -5,6 +5,7 @@ import { authenticateRouter } from './routes/authenticate'
 import { mealsRouter } from './routes/meals'
 import { metricsRouter } from './routes/metrics'
 import { ZodError } from 'zod'
+import { env } from './env'
 
 export const app = fastify()
 
@@ -35,7 +36,7 @@ app.setErrorHandler((error, _, res) => {
 
 app
   .listen({
-    port: 3333,
+    port: env.PORT,
   })
   .then(() => {
     console.log('🚀 HTTP Server Running!')
