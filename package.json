@@ -8,7 +8,8 @@
     "build": "tsup src --out-dir build",
     "start": "node build/server.js",
     "knex": "node --no-warnings --loader tsx ./node_modules/knex/bin/cli.js",
-    "lint": "eslint src --ext .ts --fix"
+    "lint": "eslint src --ext .ts --fix",
+    "test": "vitest"
   },
   "keywords": [],
   "author": "",
@@ -17,10 +18,13 @@
     "@rocketseat/eslint-config": "^2.1.0",
     "@types/bcryptjs": "^2.4.5",
     "@types/node": "^20.8.10",
+    "@types/supertest": "^2.0.16",
     "eslint": "^8.53.0",
+    "supertest": "^6.3.3",
     "tsup": "^7.2.0",
     "tsx": "^3.14.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "vitest": "^0.34.6"
   },
   "dependencies": {
     "@fastify/cookie": "^9.1.0",
