@@ -31,7 +31,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhY2M1YzllN
 # @name CreateMeal
 POST http://localhost:3333/meals
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhY2M1YzllNC0xYzQwLTQyYzktYmNmMy1kNDJhZWM0MWE1ZjEiLCJpYXQiOjE2OTkzOTgxMzcsImV4cCI6MTY5OTM5ODE5N30.MwD_O-o46Jp9cDT7jJyuB9hnGPo8kzqPXtcqCPOZ2Zk
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4ZDYxMzE5ZS04MWVhLTRhNjYtODkzZC0zZjEyY2I3OGJhZjciLCJpYXQiOjE2OTk1NDY4MjgsImV4cCI6MTY5OTU0ODAyOH0.5ipLESzN5-X8_boxgh1HH2orXg8JTE_04mTDuZSbL_8
 
 {
   "name": "Alface 3",

@@ -15,16 +15,18 @@ export async function mealsRouter(app: FastifyInstance) {
 
     const body = bodySchema.parse(req.body)
 
-    await knex('meals').insert({
-      id: randomUUID(),
-      userId: req.user.sub,
-      name: body.name,
-      description: body.description,
-      hours: body.hours,
-      isDiet: body.isDiet,
-    })
+    const [meal] = await knex('meals')
+      .insert({
+        id: randomUUID(),
+        userId: req.user.sub,
+        name: body.name,
+        description: body.description,
+        hours: body.hours,
+        isDiet: body.isDiet,
+      })
+      .returning('id')
 
-    return res.status(201).send()
+    return res.status(201).send({ meal })
   })
 
   app.get('/list', { onRequest: [checkJwt] }, async (req, res) => {
