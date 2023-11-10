@@ -7,9 +7,12 @@ export async function metricsRouter(app: FastifyInstance) {
   app.get('/count', { onRequest: [checkJwt] }, async (req, res) => {
     const userId = req.user.sub
 
-    const count = await knex('meals').where('userId', userId).count()
+    const count = await knex('meals')
+      .where('userId', userId)
+      .count('id as count')
+      .first()
 
-    return res.status(200).send({ count })
+    return res.status(200).send(count)
   })
 
   app.get(':isDiet', { onRequest: [checkJwt] }, async (req, res) => {
