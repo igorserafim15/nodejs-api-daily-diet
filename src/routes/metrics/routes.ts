@@ -1,7 +1,7 @@
+import { knex } from '@/database'
+import { checkJwt } from '@/middlewares/check-jwt'
 import { FastifyInstance } from 'fastify'
 import { z } from 'zod'
-import { checkJwt } from '../middlewares/check-jwt'
-import { knex } from '../database'
 
 export async function metricsRouter(app: FastifyInstance) {
   app.get('/count', { onRequest: [checkJwt] }, async (req, res) => {

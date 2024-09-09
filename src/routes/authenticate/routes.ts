@@ -1,40 +1,13 @@
-import { compare, hash } from 'bcryptjs'
+import { compare } from 'bcryptjs'
 import { FastifyInstance } from 'fastify'
 import { z } from 'zod'
-import { randomUUID } from 'node:crypto'
-import { checkJwt } from '../middlewares/check-jwt'
-import { cookiesOptions } from '../utils'
-import { knex } from '../database'
+import { knex } from '@/database'
+import { cookiesOptions } from '@/utils'
+import { checkJwt } from '@/middlewares/check-jwt'
+import { signupRoute } from './signup'
 
 export async function authenticateRouter(app: FastifyInstance) {
-  app.post('/signup', async (req, res) => {
-    const bodySchema = z.object({
-      name: z.string(),
-      email: z.string().email(),
-      password: z.string().length(6),
-    })
-
-    const body = bodySchema.parse(req.body)
-
-    const emailAlreadyExists = await knex('users')
-      .where('email', body.email)
-      .first()
-
-    if (emailAlreadyExists) {
-      return res.status(409).send({ message: 'Email already exists' })
-    }
-
-    const password = await hash(body.password, 6)
-
-    await knex('users').insert({
-      id: randomUUID(),
-      email: body.email,
-      name: body.name,
-      password,
-    })
-
-    return res.status(201).send()
-  })
+  signupRoute(app)
 
   app.post('/signin', async (req, res) => {
     const bodySchema = z.object({

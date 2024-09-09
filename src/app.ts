@@ -1,12 +1,39 @@
 import fastify from 'fastify'
 import cookie from '@fastify/cookie'
 import fastifyJwt from '@fastify/jwt'
-import { authenticateRouter } from './routes/authenticate'
-import { mealsRouter } from './routes/meals'
-import { metricsRouter } from './routes/metrics'
+import { authenticateRouter } from './routes/authenticate/routes'
+import { mealsRouter } from './routes/meals/routes'
+import { metricsRouter } from './routes/metrics/routes'
 import { ZodError } from 'zod'
+import {
+  jsonSchemaTransform,
+  serializerCompiler,
+  validatorCompiler,
+  ZodTypeProvider,
+} from 'fastify-type-provider-zod'
+import fastifySwagger from '@fastify/swagger'
+import fastifySwaggerUi from '@fastify/swagger-ui'
 
-export const app = fastify()
+export const app = fastify().withTypeProvider<ZodTypeProvider>()
+
+app.register(fastifySwagger, {
+  openapi: {
+    info: {
+      title: 'Api Daily Diet',
+      description: 'Sample backend service',
+      version: '1.0.0',
+    },
+    servers: [],
+  },
+  transform: jsonSchemaTransform,
+})
+
+app.register(fastifySwaggerUi, {
+  routePrefix: '/docs',
+})
+
+app.setValidatorCompiler(validatorCompiler)
+app.setSerializerCompiler(serializerCompiler)
 
 app.register(authenticateRouter, { prefix: 'user' })
 app.register(mealsRouter, { prefix: 'meals' })
